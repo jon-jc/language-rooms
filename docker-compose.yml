@@ -1,4 +1,3 @@
-version: "3.9"
 
 # Local development infrastructure for LanguageRooms.
 # - postgres: primary datastore (users, rooms, moderation data)
@@ -29,10 +28,10 @@ services:
     image: livekit/livekit-server:v1.9
     command: --config /etc/livekit.yaml --node-ip 127.0.0.1
     ports:
-      - "7880:7880"          # WebSocket signaling + HTTP API
-      - "7881:7881"          # WebRTC over TCP (fallback when UDP is blocked)
-      - "3478:3478/udp"      # Embedded TURN/UDP for NAT traversal
-      - "50000-50100:50000-50100/udp" # WebRTC UDP media ports
+      - "7890:7890"          # WebSocket signaling + HTTP API (7890 to avoid conflicts with other local projects)
+      - "7891:7891"          # WebRTC over TCP (fallback when UDP is blocked)
+      - "3479:3479/udp"      # Embedded TURN/UDP for NAT traversal
+      - "52000-52100:52000-52100/udp" # WebRTC UDP media ports
     volumes:
       - ./livekit.yaml:/etc/livekit.yaml:ro
 
