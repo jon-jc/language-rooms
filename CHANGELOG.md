@@ -2,6 +2,32 @@
 
 All notable changes to LanguageRooms, with date, summary, and rationale.
 
+## [M3] 2026-07-13 — Onboarding + room directory
+
+**Summary**
+- Data model: `LanguageProfile` (native/target + CEFR), `Room`,
+  `RoomParticipant` (presence via `leftAt`, HOST/MODERATOR/PARTICIPANT roles).
+  Migration `rooms_directory`.
+- Onboarding flow (`/onboarding`, `PUT /api/profile`): ≥1 native + ≥1 target
+  language with CEFR level, enforced before the directory.
+- Room directory (`/rooms`, `GET /api/rooms`): filter by language/level/free
+  text, live participant counts, one-click join links; taken-down rooms
+  excluded at the query layer.
+- Room creation (`/rooms/new`, `POST /api/rooms`): language/level/topic/
+  moderated flag/capacity; video 2–20 (default 12), voice-only 2–50
+  (default 20); consent-gated; rate-limited per user and per IP.
+- Pure join-admission function `decideJoin` (ban → consent → block → lock →
+  capacity, with reconnect bypass) ready for the M4 join API; blocked users
+  get a room-full-indistinguishable response by design.
+- Tests: 40 passing (room schema/capacity bounds, directory query builder,
+  join admission matrix).
+
+**Rationale**
+- Language/level as first-class columns (not free tags) so filters are
+  indexable and rooms can't misdeclare levels.
+- `decideJoin` kept pure and exhaustive because every abuse feature
+  (bans, blocks, locks) funnels through this single decision point.
+
 ## [M2] 2026-07-13 — Auth + age gate
 
 **Summary**
