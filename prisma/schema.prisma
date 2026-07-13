@@ -9,3 +9,70 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// ─── Users & auth (M2) ──────────────────────────────────────────────────────
+
+enum UserRole {
+  USER
+  MODERATOR // platform moderator: moderation queue access
+  ADMIN     // full admin: bans, takedowns, role management
+}
+
+model User {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  passwordHash     String
+  displayName      String
+  role             UserRole  @default(USER)
+  // Explicit consent to the video conduct rules; required before the user
+  // may join any room. Timestamped, not a boolean, for auditability.
+  conductConsentAt DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  ageVerification AgeVerification?
+}
+
+// ─── Age gating (M2) — see docs/age-gating.md ───────────────────────────────
+
+enum AgeVerificationResult {
+  PASSED
+  FAILED
+}
+
+/// The stored *result* of age verification at registration (18+ hard floor).
+/// A row exists only for accounts that PASSED — under-18 signups never
+/// become users; their attempts are recorded in AgeGateAttempt.
+model AgeVerification {
+  id                String                @id @default(cuid())
+  userId            String                @unique
+  user              User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dateOfBirth       DateTime              @db.Date
+  ageAtVerification Int
+  result            AgeVerificationResult
+  method            String                @default("dob-self-attestation")
+  verifiedAt        DateTime              @default(now())
+}
+
+/// Every signup age-gate evaluation, pass or fail, keyed by hashed email and
+/// IP. Used to lock out retries after a rejected date of birth so users
+/// cannot simply edit their DOB and resubmit.
+model AgeGateAttempt {
+  id        String                @id @default(cuid())
+  emailHash String
+  ipAddress String
+  result    AgeVerificationResult
+  createdAt DateTime              @default(now())
+
+  @@index([emailHash, createdAt])
+  @@index([ipAddress, createdAt])
+}
+
+// ─── Rate limiting (M2) ─────────────────────────────────────────────────────
+
+/// Fixed-window rate-limit counters, Postgres-backed (see lib/rate-limit.ts).
+model RateLimitCounter {
+  key         String   @id
+  windowStart DateTime
+  count       Int      @default(0)
+}
