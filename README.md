@@ -54,6 +54,7 @@ Run tests: `npm test` (Vitest).
   - [docs/age-gating.md](docs/age-gating.md) — 18+ enforcement, lockout, consent gate
   - [docs/modules/auth.md](docs/modules/auth.md) — sessions, passwords, guards
   - [docs/modules/rooms.md](docs/modules/rooms.md) — directory, creation, join admission
+  - [docs/modules/media.md](docs/modules/media.md) — SFU tokens, webhooks, in-room client
   - [docs/abuse-handling.md](docs/abuse-handling.md) *(lands in M6)*
   - [docs/pr-workflow.md](docs/pr-workflow.md)
 - `docker-compose.yml`, `livekit.yaml` — local infra
@@ -67,7 +68,7 @@ before the next begins (see [docs/pr-workflow.md](docs/pr-workflow.md)).
 1. **M1 — Scaffolding**: Next.js, Prisma, Docker infra, docs skeleton ✅
 2. **M2 — Auth + age-gate**: signup/login, DOB verification + lockout, conduct consent ✅
 3. **M3 — Onboarding + room directory**: languages/CEFR, browse/search/create rooms ✅
-4. **M4 — SFU media**: multi-party video/voice, reconnect, quality indicators
+4. **M4 — SFU media**: multi-party video/voice, reconnect, quality indicators ✅
 5. **M5 — Host controls**: mute/kick/lock, raise-hand, support panel, ratings
 6. **M6 — Abuse handling**: reports + evidence frames, blocks, strikes, admin queue, moderation hooks, escalation
 7. **M7 — Production hardening**: full tests, app Dockerfile, deploy docs

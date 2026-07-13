@@ -2,6 +2,30 @@
 
 All notable changes to LanguageRooms, with date, summary, and rationale.
 
+## [M4] 2026-07-13 — SFU media: multi-party video & voice
+
+**Summary**
+- LiveKit token minting with grant matrix (`lib/livekit.ts`): tokens scoped
+  to one room, 2h TTL; voice-only rooms restricted to microphone at the
+  grant level; moderated rooms start non-hosts listen-only (raise-hand in M5).
+- Join/leave APIs: server-side admission (`decideJoin` + join/rejoin rate
+  limits), presence upsert, `sendBeacon` instant leave.
+- Signature-verified LiveKit webhook endpoint reconciling participant
+  lifecycle into Postgres.
+- In-room UI: multi-participant grid, active-speaker highlighting,
+  connection-quality indicators, mic/cam controls, reconnect toast,
+  voice-only variant.
+- Tests: 47 passing (grant matrix; minted JWT verified against secret).
+
+**Rationale**
+- Policy-before-token: LiveKit admits any valid token holder, so every
+  admission rule must run in our backend before minting; the token is the
+  *result* of authorization, never the mechanism.
+- Rejoin rate limit (5/10min per user+room) specifically deters kick-evasion
+  and room scanning, distinct from the general join limit.
+- Verified live: browser connected to the SFU (signal connected, protocol
+  16), webhooks delivered/applied, count 0→1→0 across join/leave.
+
 ## [M3] 2026-07-13 — Onboarding + room directory
 
 **Summary**
