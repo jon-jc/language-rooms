@@ -2,6 +2,30 @@
 
 All notable changes to LanguageRooms, with date, summary, and rationale.
 
+## [M5] 2026-07-13 — Host controls, raise-hand, support panel, ratings
+
+**Summary**
+- In-room moderation API with server-side role authz: mute (SFU-level),
+  kick (+15-min rejoin cooldown), promote to moderator, lock/unlock,
+  set capacity, grant/revoke speaking. Moderators manage participants only;
+  hosts manage structure; self-targeting refused.
+- Moderated rooms: listen-only non-hosts, raise-hand over data channels,
+  host grant flows through LiveKit permission updates.
+- Support panel: persisted typed notes (correction/vocab/link) + live
+  broadcast; translation-assist provider interface with dev stub.
+- Post-session ratings (1–5 + feedback, participants only, skippable).
+- Audit logging of every in-room action (`AuditLog` + structured logs).
+- Models: `AuditLog`, `RoomNote`, `RoomRating`, `RoomParticipant.kickedUntil`.
+- Tests: 57 passing.
+
+**Rationale**
+- All powers are enforced where they can't be bypassed: mutes and speaking
+  grants at the SFU, kicks and locks at the join API, roles in the DB.
+- Kick cooldown exists because a kick without rejoin friction is just a
+  reconnect prompt for an abuser.
+- The support panel is deliberately a narrow notes surface (typed entries,
+  500-char cap), not a chat mode — voice/video stays the main experience.
+
 ## [M4] 2026-07-13 — SFU media: multi-party video & voice
 
 **Summary**

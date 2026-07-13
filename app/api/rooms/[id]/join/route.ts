@@ -18,6 +18,7 @@ const REFUSALS: Record<JoinRefusal, { status: number; code: string; message: str
   BLOCKED: { status: 409, code: "ROOM_FULL", message: "This room is currently full." },
   ROOM_LOCKED: { status: 423, code: "ROOM_LOCKED", message: "This room is locked." },
   ROOM_FULL: { status: 409, code: "ROOM_FULL", message: "This room is currently full." },
+  KICK_COOLDOWN: { status: 403, code: "KICK_COOLDOWN", message: "You can't rejoin this room right now." },
 };
 
 /**
@@ -64,6 +65,8 @@ export const POST = apiHandler(async (req: NextRequest, ctx) => {
     // Block + ban enforcement is wired in M6 (see docs/abuse-handling.md).
     isBlockedFromRoom: false,
     isBanned: false,
+    kickCooldownActive:
+      existing?.kickedUntil != null && existing.kickedUntil > new Date(),
   });
   if (refusal) {
     const r = REFUSALS[refusal];
@@ -99,6 +102,8 @@ export const POST = apiHandler(async (req: NextRequest, ctx) => {
       name: room!.name,
       isVoiceOnly: room!.isVoiceOnly,
       isModerated: room!.isModerated,
+      isLocked: room!.isLocked,
+      capacity: room!.capacity,
     },
   });
 });

@@ -9,7 +9,7 @@ export default async function RoomPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requireOnboardedUserPage();
+  const user = await requireOnboardedUserPage();
   const { id } = await params;
 
   const room = await db.room.findUnique({
@@ -39,7 +39,10 @@ export default async function RoomPage({
           </p>
         </div>
       </div>
-      <RoomClient roomId={room.id} />
+      <RoomClient
+        roomId={room.id}
+        user={{ id: user.id, displayName: user.displayName }}
+      />
     </div>
   );
 }

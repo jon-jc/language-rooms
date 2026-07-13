@@ -90,7 +90,8 @@ export type JoinRefusal =
   | "ROOM_FULL"
   | "CONSENT_REQUIRED"
   | "BLOCKED"
-  | "BANNED";
+  | "BANNED"
+  | "KICK_COOLDOWN";
 
 /**
  * Pure join-admission decision. `null` means admit. Order matters: the
@@ -109,11 +110,14 @@ export function decideJoin(input: {
   userConsented: boolean;
   isBlockedFromRoom: boolean;
   isBanned: boolean;
+  /** A host kicked this user recently (RoomParticipant.kickedUntil in the future). */
+  kickCooldownActive?: boolean;
 }): JoinRefusal | null {
   if (!input.room || input.room.isTakenDown) return "ROOM_NOT_FOUND";
   if (input.isBanned) return "BANNED";
   if (!input.userConsented) return "CONSENT_REQUIRED";
   if (input.isBlockedFromRoom) return "BLOCKED";
+  if (input.kickCooldownActive) return "KICK_COOLDOWN";
   if (input.alreadyInRoom) return null; // rejoin/reconnect of a present user
   if (input.room.isLocked && !input.isHost) return "ROOM_LOCKED";
   if (input.activeParticipantCount >= input.room.capacity) return "ROOM_FULL";
