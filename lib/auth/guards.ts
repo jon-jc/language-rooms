@@ -22,6 +22,19 @@ export async function requireConsentedUserPage() {
   return user;
 }
 
+/** Consent + a completed language profile (≥1 native and ≥1 target). */
+export async function requireOnboardedUserPage() {
+  const user = await requireConsentedUserPage();
+  const langs = await db.languageProfile.findMany({
+    where: { userId: user.id },
+    select: { kind: true },
+  });
+  const hasNative = langs.some((l) => l.kind === "NATIVE");
+  const hasTarget = langs.some((l) => l.kind === "TARGET");
+  if (!hasNative || !hasTarget) redirect("/onboarding");
+  return user;
+}
+
 export async function requireStaffPage() {
   const user = await requireUserPage();
   if (user.role !== "ADMIN" && user.role !== "MODERATOR") redirect("/");
