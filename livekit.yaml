@@ -1,0 +1,36 @@
+# LiveKit SFU configuration — LOCAL DEVELOPMENT ONLY.
+#
+# Production notes (see docs/architecture.md):
+# - Replace the dev API key/secret with strong generated values.
+# - Serve signaling over wss:// behind TLS.
+# - Enable TURN over TLS (turn.tls_port + certs) and set a real domain;
+#   the embedded TURN server below handles NAT traversal for clients
+#   whose UDP is blocked. STUN is built into LiveKit's ICE handling.
+# - Set rtc.use_external_ip: true when running on a cloud VM.
+
+port: 7880
+
+rtc:
+  tcp_port: 7881
+  port_range_start: 50000
+  port_range_end: 50100
+  use_external_ip: false
+
+keys:
+  # key: secret — must match LIVEKIT_API_KEY / LIVEKIT_API_SECRET in .env
+  devkey: devsecret_languagerooms_local_only_0123456789abcdef
+
+turn:
+  enabled: true
+  domain: localhost
+  udp_port: 3478
+
+# Webhooks push room/participant lifecycle events to the Next.js app so
+# server-side room state (participant lists, counts) stays authoritative.
+webhook:
+  api_key: devkey
+  urls:
+    - http://host.docker.internal:3000/api/livekit/webhook
+
+logging:
+  level: info

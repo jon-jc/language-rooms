@@ -1,0 +1,40 @@
+version: "3.9"
+
+# Local development infrastructure for LanguageRooms.
+# - postgres: primary datastore (users, rooms, moderation data)
+# - livekit:  SFU (Selective Forwarding Unit) for multi-party WebRTC
+#             video/voice, with embedded TURN for NAT traversal.
+#
+# The Next.js app itself runs with `npm run dev` during development;
+# a containerized app service (`app`) is defined for full-stack runs.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: languagerooms
+      POSTGRES_PASSWORD: languagerooms_dev
+      POSTGRES_DB: languagerooms
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U languagerooms"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  livekit:
+    image: livekit/livekit-server:v1.9
+    command: --config /etc/livekit.yaml --node-ip 127.0.0.1
+    ports:
+      - "7880:7880"          # WebSocket signaling + HTTP API
+      - "7881:7881"          # WebRTC over TCP (fallback when UDP is blocked)
+      - "3478:3478/udp"      # Embedded TURN/UDP for NAT traversal
+      - "50000-50100:50000-50100/udp" # WebRTC UDP media ports
+    volumes:
+      - ./livekit.yaml:/etc/livekit.yaml:ro
+
+volumes:
+  pgdata:

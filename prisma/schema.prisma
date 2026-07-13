@@ -1,0 +1,11 @@
+// LanguageRooms data model.
+// Models are introduced milestone by milestone; see CHANGELOG.md.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
