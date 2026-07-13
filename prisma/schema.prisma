@@ -31,6 +31,82 @@ model User {
   updatedAt        DateTime  @updatedAt
 
   ageVerification AgeVerification?
+  languages       LanguageProfile[]
+  roomsCreated    Room[]            @relation("RoomCreator")
+  participations  RoomParticipant[]
+}
+
+// ─── Language profile & onboarding (M3) ─────────────────────────────────────
+
+enum CefrLevel {
+  A1
+  A2
+  B1
+  B2
+  C1
+  C2
+}
+
+enum LanguageKind {
+  NATIVE
+  TARGET
+}
+
+model LanguageProfile {
+  id           String       @id @default(cuid())
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  languageCode String // ISO 639-1
+  kind         LanguageKind
+  level        CefrLevel? // required for TARGET, null for NATIVE
+
+  @@unique([userId, languageCode, kind])
+  @@index([userId])
+}
+
+// ─── Rooms & directory (M3) ─────────────────────────────────────────────────
+
+model Room {
+  id           String     @id @default(cuid())
+  name         String
+  topic        String?
+  languageCode String
+  level        CefrLevel? // null = all levels welcome
+  isVoiceOnly  Boolean    @default(false)
+  capacity     Int        @default(12)
+  isLocked     Boolean    @default(false)
+  isModerated  Boolean    @default(false) // raise-hand-to-speak mode (M5)
+  isTakenDown  Boolean    @default(false) // admin takedown (M6)
+  createdById  String
+  createdBy    User       @relation("RoomCreator", fields: [createdById], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  participants RoomParticipant[]
+
+  @@index([languageCode, level])
+}
+
+enum RoomRole {
+  HOST
+  MODERATOR
+  PARTICIPANT
+}
+
+/// One row per user per room; `leftAt` null means currently present.
+/// Kept in sync with the SFU via LiveKit webhooks (M4).
+model RoomParticipant {
+  id       String    @id @default(cuid())
+  roomId   String
+  room     Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role     RoomRole  @default(PARTICIPANT)
+  joinedAt DateTime  @default(now())
+  leftAt   DateTime?
+
+  @@unique([roomId, userId])
+  @@index([roomId, leftAt])
 }
 
 // ─── Age gating (M2) — see docs/age-gating.md ───────────────────────────────
