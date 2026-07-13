@@ -14,6 +14,8 @@ import {
 import "@livekit/components-styles";
 import { Track } from "livekit-client";
 import { buttonSecondaryClass, Card, ErrorNote } from "@/components/ui";
+import SupportPanel from "@/components/room/SupportPanel";
+import HostControls from "@/components/room/HostControls";
 
 interface JoinInfo {
   token: string;
@@ -24,6 +26,8 @@ interface JoinInfo {
     name: string;
     isVoiceOnly: boolean;
     isModerated: boolean;
+    isLocked: boolean;
+    capacity: number;
   };
 }
 
@@ -33,7 +37,13 @@ interface JoinInfo {
  * protocol. LiveKit's client handles ICE/TURN and automatic reconnection;
  * ConnectionStateToast surfaces reconnect state to the user.
  */
-export default function RoomClient({ roomId }: { roomId: string }) {
+export default function RoomClient({
+  roomId,
+  user,
+}: {
+  roomId: string;
+  user: { id: string; displayName: string };
+}) {
   const router = useRouter();
   const [join, setJoin] = useState<JoinInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -64,8 +74,7 @@ export default function RoomClient({ roomId }: { roomId: string }) {
     } catch {
       fetch(`/api/rooms/${roomId}/leave`, { method: "POST", keepalive: true });
     }
-    router.push("/rooms");
-    router.refresh();
+    router.push(`/rooms/${roomId}/rate`);
   }, [roomId, router]);
 
   if (error) {
@@ -92,8 +101,10 @@ export default function RoomClient({ roomId }: { roomId: string }) {
     );
   }
 
+  const isStaff = join.role === "HOST" || join.role === "MODERATOR";
+
   return (
-    <div data-lk-theme="default" className="flex h-[calc(100vh-8rem)] flex-col">
+    <div data-lk-theme="default" className="h-[calc(100vh-9rem)]">
       <LiveKitRoom
         token={join.token}
         serverUrl={join.url}
@@ -101,19 +112,37 @@ export default function RoomClient({ roomId }: { roomId: string }) {
         video={!join.room.isVoiceOnly}
         audio
         onDisconnected={onLeave}
-        className="flex-1"
+        className="flex h-full gap-3"
       >
-        <MediaStage isVoiceOnly={join.room.isVoiceOnly} />
-        <RoomAudioRenderer />
-        <ControlBar
-          variation="minimal"
-          controls={{
-            microphone: true,
-            camera: !join.room.isVoiceOnly,
-            screenShare: false,
-            chat: false,
-            leave: true,
-          }}
+        <div className="flex min-w-0 flex-1 flex-col">
+          <MediaStage isVoiceOnly={join.room.isVoiceOnly} />
+          <RoomAudioRenderer />
+          <ControlBar
+            variation="minimal"
+            controls={{
+              microphone: true,
+              camera: !join.room.isVoiceOnly,
+              screenShare: false,
+              chat: false,
+              leave: true,
+            }}
+          />
+        </div>
+        {isStaff ? (
+          <HostControls
+            roomId={roomId}
+            role={join.role as "HOST" | "MODERATOR"}
+            isModerated={join.room.isModerated}
+            isLocked={join.room.isLocked}
+            capacity={join.room.capacity}
+          />
+        ) : null}
+        <SupportPanel
+          roomId={roomId}
+          isModerated={join.room.isModerated}
+          role={join.role}
+          userId={user.id}
+          displayName={user.displayName}
         />
         <ConnectionStateToast />
       </LiveKitRoom>
