@@ -34,6 +34,8 @@ model User {
   languages       LanguageProfile[]
   roomsCreated    Room[]            @relation("RoomCreator")
   participations  RoomParticipant[]
+  notes           RoomNote[]
+  ratings         RoomRating[]
 }
 
 // ─── Language profile & onboarding (M3) ─────────────────────────────────────
@@ -83,6 +85,8 @@ model Room {
   updatedAt    DateTime   @updatedAt
 
   participants RoomParticipant[]
+  notes        RoomNote[]
+  ratings      RoomRating[]
 
   @@index([languageCode, level])
 }
@@ -104,6 +108,8 @@ model RoomParticipant {
   role     RoomRole  @default(PARTICIPANT)
   joinedAt DateTime  @default(now())
   leftAt   DateTime?
+  // Set when kicked by a host/moderator; blocks rejoin until it passes (M5).
+  kickedUntil DateTime?
 
   @@unique([roomId, userId])
   @@index([roomId, leftAt])
@@ -151,4 +157,58 @@ model RateLimitCounter {
   key         String   @id
   windowStart DateTime
   count       Int      @default(0)
+}
+
+// ─── Host controls, support panel, ratings (M5) ─────────────────────────────
+
+/// Immutable audit trail of every moderation-relevant action, including
+/// in-room host actions (mute/kick/lock/promote) and admin actions (M6).
+model AuditLog {
+  id           String   @id @default(cuid())
+  actorId      String?
+  action       String
+  roomId       String?
+  targetUserId String?
+  detail       Json?
+  createdAt    DateTime @default(now())
+
+  @@index([roomId, createdAt])
+  @@index([targetUserId, createdAt])
+  @@index([actorId, createdAt])
+}
+
+enum NoteKind {
+  CORRECTION
+  VOCAB
+  LINK
+  NOTE
+}
+
+/// Support-panel entries (corrections, vocabulary, links) — the secondary
+/// text channel. Persisted so late joiners see recent notes.
+model RoomNote {
+  id        String   @id @default(cuid())
+  roomId    String
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  kind      NoteKind @default(NOTE)
+  text      String
+  createdAt DateTime @default(now())
+
+  @@index([roomId, createdAt])
+}
+
+/// Post-session room rating collected on leave.
+model RoomRating {
+  id        String   @id @default(cuid())
+  roomId    String
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating    Int // 1..5, validated at the API layer
+  feedback  String?
+  createdAt DateTime @default(now())
+
+  @@index([roomId, createdAt])
 }
