@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { apiHandler, jsonError, requireSession } from "@/lib/api";
 import { decideJoin, type JoinRefusal } from "@/lib/rooms";
+import { blockedCounterparties, isBlockedFromRoom } from "@/lib/abuse/blocks";
+import { isBannedNow } from "@/lib/abuse/thresholds";
 import { mintRoomToken } from "@/lib/livekit";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { env } from "@/lib/env";
@@ -62,9 +64,10 @@ export const POST = apiHandler(async (req: NextRequest, ctx) => {
     alreadyInRoom: existing?.leftAt === null,
     isHost: room?.createdById === user.id,
     userConsented: user.conductConsentAt !== null,
-    // Block + ban enforcement is wired in M6 (see docs/abuse-handling.md).
-    isBlockedFromRoom: false,
-    isBanned: false,
+    // A block in either direction with any active participant refuses the
+    // join, and the refusal is indistinguishable from "room full".
+    isBlockedFromRoom: room ? await isBlockedFromRoom(user.id, room.id) : false,
+    isBanned: isBannedNow(user),
     kickCooldownActive:
       existing?.kickedUntil != null && existing.kickedUntil > new Date(),
   });
@@ -93,10 +96,15 @@ export const POST = apiHandler(async (req: NextRequest, ctx) => {
   });
 
   log.info({ roomId, userId: user.id, role }, "join admitted; token minted");
+  // Defense-in-depth for blocks created mid-session: the client hides these
+  // users' tiles and mutes their audio if they are ever co-present.
+  const hiddenUserIds = [...(await blockedCounterparties(user.id))];
+
   return NextResponse.json({
     token,
     url: env().NEXT_PUBLIC_LIVEKIT_URL,
     role,
+    hiddenUserIds,
     room: {
       id: room!.id,
       name: room!.name,
