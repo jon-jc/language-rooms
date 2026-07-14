@@ -85,6 +85,93 @@ body {
   background: transparent;
 }
 
+/* ── Landing page ──────────────────────────────────────────────────────── */
+
+/* Slow-drifting aurora blobs behind the hero */
+@keyframes aurora-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(60px, -40px) scale(1.15); }
+}
+@keyframes aurora-b {
+  0%, 100% { transform: translate(0, 0) scale(1.1); }
+  50% { transform: translate(-70px, 30px) scale(0.95); }
+}
+.aurora {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+.aurora-a { animation: aurora-a 14s ease-in-out infinite; }
+.aurora-b { animation: aurora-b 18s ease-in-out infinite; }
+
+/* Greeting rotator */
+@keyframes greet-in {
+  0% { opacity: 0; transform: translateY(60%) rotateX(45deg); }
+  12%, 88% { opacity: 1; transform: translateY(0) rotateX(0); }
+  100% { opacity: 0; transform: translateY(-60%) rotateX(-45deg); }
+}
+.greet-word { animation: greet-in 2.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Speaking ring on mock video tiles */
+@keyframes speak-ring {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.9), 0 0 24px rgba(52, 211, 153, 0.35); }
+  50% { box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.5), 0 0 36px rgba(52, 211, 153, 0.5); }
+}
+.speaking { animation: speak-ring 1.2s ease-in-out infinite; }
+
+/* Voice activity bars */
+@keyframes voice-bar {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+.voice-bar {
+  transform-origin: bottom;
+  animation: voice-bar 0.7s ease-in-out infinite;
+}
+.voice-bar:nth-child(2) { animation-delay: 0.15s; }
+.voice-bar:nth-child(3) { animation-delay: 0.3s; }
+
+/* Infinite room-card marquee (content duplicated for a seamless loop) */
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+.marquee-track { display: flex; width: max-content; gap: 1rem; }
+.marquee-left { animation: marquee-left 40s linear infinite; }
+.marquee-right { animation: marquee-right 46s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+/* Note "arriving" in the mock support panel */
+@keyframes note-in {
+  0% { opacity: 0; transform: translateY(8px) scale(0.97); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.note-in { animation: note-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Soft glow behind the CTA + mock room */
+.glow {
+  box-shadow:
+    0 0 60px rgba(99, 102, 241, 0.25),
+    0 0 120px rgba(168, 85, 247, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-a, .aurora-b, .greet-word, .speaking, .voice-bar,
+  .marquee-left, .marquee-right, .note-in, .rise-in, .live-dot {
+    animation: none !important;
+  }
+}
+
 /* Whiteboard drawing surface */
 .wb-surface {
   touch-action: none;
