@@ -53,7 +53,7 @@ export default function LoginPage() {
         <p className="mt-4 text-center text-sm text-zinc-500">
           New here?{" "}
           <Link href="/signup" className="text-indigo-400 underline">
-            Create an account (18+)
+            Create an account
           </Link>
         </p>
       </Card>

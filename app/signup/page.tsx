@@ -40,8 +40,7 @@ export default function SignupPage() {
       <Card>
         <h1 className="mb-1 text-xl font-bold">Create your account</h1>
         <p className="mb-6 text-sm text-zinc-400">
-          LanguageRooms is a live video platform for adults.{" "}
-          <strong className="text-zinc-200">You must be 18 or older.</strong>
+          A couple of details and you&apos;re in the conversation.
         </p>
         <form onSubmit={onSubmit} className="space-y-4">
           <Field label="Display name">
@@ -55,18 +54,18 @@ export default function SignupPage() {
           </Field>
           <Field
             label="Date of birth"
-            hint="Used to verify that you are 18 or older. The verification result is stored."
+            hint="We use this to verify your age; the verification result is stored."
           >
             <input name="dateOfBirth" type="date" required className={inputClass} />
           </Field>
           <label className="flex items-start gap-2 text-sm text-zinc-300">
             <input name="acceptedTerms" type="checkbox" required className="mt-1" />
             <span>
-              I confirm I am 18 or older and accept the{" "}
+              I accept the{" "}
               <Link href="/terms" className="text-indigo-400 underline" target="_blank">
                 Terms of Service
               </Link>
-              .
+              , including its age requirement.
             </span>
           </label>
           <ErrorNote message={error} />
