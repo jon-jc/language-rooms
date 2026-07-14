@@ -2,11 +2,12 @@
 
 A TinyChat-style, video-and-voice language-learning platform. People browse
 persistent rooms organized by language and level ("Spanish – Beginner",
-"Japanese Conversation") and practice together over live multi-party video
-and group voice. Text is a secondary support channel (corrections, vocabulary,
-links) — the main experience is talking.
+"Japanese Conversation") and practice together over live multi-party video,
+group voice, and a **shared whiteboard** (drawing + photo uploads). Text is a
+secondary support channel (corrections, vocabulary, links) — the main
+experience is talking.
 
-**This platform is strictly 18+.** Age verification is enforced at signup
+Adults-only per the Terms of Service: age verification is enforced at signup
 (see [docs/age-gating.md](docs/age-gating.md)) and abuse handling is a
 first-class subsystem (see [docs/abuse-handling.md](docs/abuse-handling.md)).
 
@@ -56,6 +57,7 @@ Run tests: `npm test` (Vitest).
   - [docs/modules/rooms.md](docs/modules/rooms.md) — directory, creation, join admission
   - [docs/modules/media.md](docs/modules/media.md) — SFU tokens, webhooks, in-room client
   - [docs/modules/host-controls.md](docs/modules/host-controls.md) — roles, moderation actions, support panel, ratings
+  - [docs/modules/whiteboard.md](docs/modules/whiteboard.md) — shared whiteboard, moderated photo uploads
   - [docs/abuse-handling.md](docs/abuse-handling.md) *(lands in M6)*
   - [docs/pr-workflow.md](docs/pr-workflow.md)
 - `docker-compose.yml`, `livekit.yaml` — local infra
