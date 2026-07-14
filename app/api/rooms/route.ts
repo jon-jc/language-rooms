@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { apiHandler, clientIp, jsonError, parseBody, requireSession } from "@/lib/api";
 import { buildRoomWhere, createRoomSchema, roomFilterSchema } from "@/lib/rooms";
+import { isBannedNow } from "@/lib/abuse/thresholds";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
@@ -51,6 +52,9 @@ export const POST = apiHandler(async (req: NextRequest) => {
   if (!user) return jsonError(401, "UNAUTHENTICATED", "Sign in required");
   if (!user.conductConsentAt) {
     return jsonError(403, "CONSENT_REQUIRED", "Accept the video conduct rules first.");
+  }
+  if (isBannedNow(user)) {
+    return jsonError(403, "ACCOUNT_RESTRICTED", "Your account cannot create rooms right now.");
   }
 
   // Limit by user id *and* IP so neither account-cycling nor a single

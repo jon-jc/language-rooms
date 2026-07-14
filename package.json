@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "db:migrate": "prisma migrate dev",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "user:promote": "node scripts/promote-user.mjs"
   },
   "dependencies": {
     "@livekit/components-react": "^2.9.23",
