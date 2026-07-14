@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { IconMic, IconPen, IconVideo, IconVolumeOff } from "@/components/icons";
 
 /**
  * An animated, faithful mock of the in-room experience: video grid with a
@@ -100,7 +101,7 @@ export default function MockRoom() {
                   </span>
                   <span className="flex items-center gap-1">
                     {p.tag === "muted" ? (
-                      <span className="text-[10px]" title="muted">🔇</span>
+                      <span className="text-zinc-300" title="muted"><IconVolumeOff size={11} /></span>
                     ) : null}
                     {/* Connection quality */}
                     <span className="flex items-end gap-px" aria-hidden>
@@ -145,15 +146,15 @@ export default function MockRoom() {
 
       {/* Control bar */}
       <div className="mt-3 flex items-center justify-center gap-2">
-        {["🎙️", "📷", "🖊️"].map((icon) => (
+        {[IconMic, IconVideo, IconPen].map((Icon, i) => (
           <span
-            key={icon}
-            className="flex h-9 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-sm"
+            key={i}
+            className="flex h-9 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 text-zinc-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
           >
-            {icon}
+            <Icon size={15} />
           </span>
         ))}
-        <span className="flex h-9 items-center justify-center rounded-xl bg-rose-600/80 px-4 text-xs font-semibold text-white">
+        <span className="flex h-9 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-rose-600 px-4 text-xs font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
           Leave
         </span>
       </div>

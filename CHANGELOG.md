@@ -2,6 +2,29 @@
 
 All notable changes to LanguageRooms, with date, summary, and rationale.
 
+## [Feature] 2026-07-14 — Design-system overhaul (UI/UX v2)
+
+**Summary**
+- New design system in `globals.css`: full token set (deep-space palette,
+  iris→orchid accent, hairline surfaces with top-light insets), `.btn`
+  pill controls with depth and press states, `.input`/`.chip` primitives,
+  `.glass`/`.panel` surface tiers, dot-lattice backdrop, calm motion.
+- Hand-inlined SVG icon set (`components/icons.tsx`, 24 lucide-style
+  icons) replaces emoji across all app chrome — nav, buttons, panels,
+  badges, control bars. Flags stay emoji (content, not chrome).
+- Every surface swept: nav (avatar chip, blur bar), landing, directory
+  (icon search, flag tiles, badge rows, hover-lift cards), onboarding
+  (gradient chips), auth/consent, room stage (pill tab switcher,
+  hover-reveal report button, restyled support/host panels, whiteboard
+  toolbar), admin queue, rating, and LiveKit's own components themed via
+  `--lk-*` variables to match.
+- All motion honors `prefers-reduced-motion`; custom select chevrons,
+  accent-colored checkboxes, styled selection color.
+
+**Rationale**
+- One token layer + shared primitives means every future page inherits the
+  system; the emoji→SVG swap is the single biggest perceived-quality lift.
+
 ## [Feature] 2026-07-14 — Landing page: hero, live product mock, room marquee
 
 **Summary**

@@ -15,6 +15,7 @@ import {
 import "@livekit/components-styles";
 import { Track } from "livekit-client";
 import { buttonSecondaryClass, Card, ErrorNote } from "@/components/ui";
+import { IconFlag, IconPen, IconVideo } from "@/components/icons";
 import SupportPanel from "@/components/room/SupportPanel";
 import HostControls from "@/components/room/HostControls";
 import ReportModal, { ReportTarget } from "@/components/room/ReportModal";
@@ -121,18 +122,19 @@ export default function RoomClient({
         className="flex h-full gap-3"
       >
         <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <div className="glass flex w-fit gap-1 rounded-xl p-1">
+          <div className="panel flex w-fit gap-1 rounded-full p-1">
             {(["video", "board"] as const).map((v) => (
               <button
                 key={v}
                 onClick={() => setView(v)}
-                className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-all ${
+                className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 text-[13px] font-medium transition-all ${
                   view === v
-                    ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow"
+                    ? "bg-gradient-to-r from-[#6d66ff] to-[#c26bff] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]"
                     : "text-zinc-400 hover:text-white"
                 }`}
               >
-                {v === "video" ? "🎥 Video" : "🖊️ Whiteboard"}
+                {v === "video" ? <IconVideo size={14} /> : <IconPen size={14} />}
+                {v === "video" ? "Video" : "Whiteboard"}
               </button>
             ))}
           </div>
@@ -230,7 +232,7 @@ function StageTile({ onReport }: { onReport: (target: ReportTarget) => void }) {
   const participant = trackRef.participant;
 
   return (
-    <div className="relative h-full w-full">
+    <div className="group relative h-full w-full">
       <ParticipantTile trackRef={trackRef} className="h-full" />
       {!participant.isLocal ? (
         <button
@@ -250,9 +252,9 @@ function StageTile({ onReport }: { onReport: (target: ReportTarget) => void }) {
               },
             })
           }
-          className="absolute right-1.5 top-1.5 z-10 rounded bg-black/60 px-1.5 py-0.5 text-xs text-red-300 opacity-70 hover:opacity-100"
+          className="absolute right-1.5 top-1.5 z-10 flex items-center gap-1 rounded-full border border-white/10 bg-black/60 px-2 py-1 text-[11px] font-medium text-rose-300 opacity-0 backdrop-blur transition-opacity hover:!opacity-100 group-hover:opacity-80 [@media(hover:none)]:opacity-70"
         >
-          ⚑ Report
+          <IconFlag size={11} /> Report
         </button>
       ) : null}
     </div>

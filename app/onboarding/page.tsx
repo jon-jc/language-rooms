@@ -68,57 +68,44 @@ export default function OnboardingPage() {
   return (
     <div className="mx-auto mt-8 max-w-3xl space-y-6">
       <Card>
-        <h1 className="text-xl font-bold">Your languages</h1>
-        <p className="mt-1 text-sm text-zinc-400">
+        <p className="eyebrow mb-1">Step 1 of 1</p>
+        <h1 className="text-2xl font-bold tracking-tight">Your languages</h1>
+        <p className="mt-1.5 text-sm text-zinc-400">
           Tell us what you speak and what you&apos;re learning so we can show you the
           right rooms. Proficiency uses the CEFR scale (A1 beginner → C2 mastery).
         </p>
 
-        <h2 className="mt-6 text-sm font-semibold uppercase tracking-wide text-zinc-400">
-          I speak natively (up to 4)
-        </h2>
-        <div className="mt-2 flex flex-wrap gap-2">
+        <h2 className="eyebrow mt-8">I speak natively (up to 4)</h2>
+        <div className="mt-3 flex flex-wrap gap-2">
           {LANGUAGES.map((lang) => (
             <button
               key={lang.code}
               type="button"
               onClick={() => toggleNative(lang.code)}
-              className={`rounded-full border px-3 py-1 text-sm transition-colors ${
-                native.includes(lang.code)
-                  ? "border-indigo-500 bg-indigo-600 text-white"
-                  : "border-zinc-700 text-zinc-300 hover:border-zinc-500"
-              }`}
+              className={`chip ${native.includes(lang.code) ? "chip-on" : ""}`}
             >
-              {lang.name}
+              <span>{lang.flag}</span> {lang.name}
             </button>
           ))}
         </div>
 
-        <h2 className="mt-6 text-sm font-semibold uppercase tracking-wide text-zinc-400">
-          I&apos;m learning (up to 6)
-        </h2>
-        <div className="mt-2 flex flex-wrap gap-2">
+        <h2 className="eyebrow mt-8">I&apos;m learning (up to 6)</h2>
+        <div className="mt-3 flex flex-wrap gap-2">
           {LANGUAGES.filter((l) => !native.includes(l.code)).map((lang) => (
             <button
               key={lang.code}
               type="button"
               onClick={() => toggleTarget(lang.code)}
-              className={`rounded-full border px-3 py-1 text-sm transition-colors ${
-                targets.some((t) => t.code === lang.code)
-                  ? "border-emerald-500 bg-emerald-700 text-white"
-                  : "border-zinc-700 text-zinc-300 hover:border-zinc-500"
-              }`}
+              className={`chip ${targets.some((t) => t.code === lang.code) ? "chip-on-alt" : ""}`}
             >
-              {lang.name}
+              <span>{lang.flag}</span> {lang.name}
             </button>
           ))}
         </div>
 
         {targets.length > 0 && (
-          <div className="mt-6 space-y-3">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400">
-              My level in each
-            </h2>
+          <div className="mt-8 space-y-3">
+            <h2 className="eyebrow">My level in each</h2>
             {targets.map((t) => (
               <div key={t.code} className="flex items-center gap-3">
                 <span className="w-40 text-sm text-zinc-200">

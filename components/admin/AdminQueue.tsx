@@ -80,8 +80,8 @@ export default function AdminQueue({ isAdmin }: { isAdmin: boolean }) {
   }
 
   const actionBtn =
-    "rounded-lg border border-zinc-700 px-2.5 py-1 text-xs font-medium " +
-    "text-zinc-200 hover:bg-zinc-800 disabled:opacity-40 transition-colors";
+    "rounded-full border border-white/12 bg-white/[0.04] px-3 py-1 text-xs font-medium " +
+    "text-zinc-200 hover:bg-white/[0.09] hover:text-white disabled:opacity-40 transition-colors";
 
   return (
     <div className="space-y-4">
@@ -97,10 +97,10 @@ export default function AdminQueue({ isAdmin }: { isAdmin: boolean }) {
           <button
             key={value}
             onClick={() => setFilter(value)}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+            className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium transition-all ${
               filter === value
-                ? "bg-indigo-600 text-white"
-                : "border border-zinc-700 text-zinc-400 hover:text-white"
+                ? "bg-gradient-to-r from-[#6d66ff] to-[#c26bff] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]"
+                : "border border-white/12 bg-white/[0.03] text-zinc-400 hover:bg-white/[0.07] hover:text-white"
             }`}
           >
             {label}
@@ -127,11 +127,11 @@ export default function AdminQueue({ isAdmin }: { isAdmin: boolean }) {
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     {severe ? (
-                      <span className="rounded bg-red-900/70 px-2 py-0.5 text-xs font-bold text-red-200">
+                      <span className="rounded-full bg-rose-500/20 px-2.5 py-0.5 text-[11px] font-bold text-rose-200">
                         SEVERE {report.status === "ESCALATED" ? "· ESCALATED" : ""}
                       </span>
                     ) : (
-                      <span className="rounded bg-zinc-800 px-2 py-0.5 text-xs text-zinc-300">
+                      <span className="rounded-full border border-white/10 bg-white/[0.06] px-2.5 py-0.5 text-[11px] text-zinc-300">
                         {report.status}
                       </span>
                     )}
@@ -163,7 +163,7 @@ export default function AdminQueue({ isAdmin }: { isAdmin: boolean }) {
                     ) : null}
                   </p>
                   {report.comment ? (
-                    <p className="mt-1 rounded bg-zinc-950 px-2 py-1 text-sm text-zinc-400">
+                    <p className="mt-1.5 rounded-lg border border-white/[0.05] bg-white/[0.03] px-2.5 py-1.5 text-sm text-zinc-400">
                       “{report.comment}”
                     </p>
                   ) : null}
@@ -176,7 +176,7 @@ export default function AdminQueue({ isAdmin }: { isAdmin: boolean }) {
                         key={frame.id}
                         src={`/api/admin/evidence/${frame.id}`}
                         alt="Evidence frame"
-                        className="h-20 w-28 rounded-lg border border-zinc-700 object-cover"
+                        className="h-20 w-28 rounded-xl border border-white/10 object-cover"
                       />
                     ))}
                   </div>

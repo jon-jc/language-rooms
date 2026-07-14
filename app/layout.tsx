@@ -39,12 +39,14 @@ export default async function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="app-backdrop flex min-h-full flex-col text-zinc-100">
+      <body className="app-backdrop relative flex min-h-full flex-col text-zinc-100">
+        {/* fine dot lattice fading from the top */}
+        <div className="dot-lattice pointer-events-none absolute inset-x-0 top-0 -z-10 h-[42rem]" />
         <TopNav user={user} />
         <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8">
           {children}
         </main>
-        <footer className="border-t border-white/5 py-5 text-center text-xs text-zinc-600">
+        <footer className="hairline-t py-6 text-center text-xs text-zinc-600">
           © LanguageRooms ·{" "}
           <a href="/terms" className="transition-colors hover:text-zinc-400">
             Terms of Service

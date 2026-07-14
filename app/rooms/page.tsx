@@ -4,6 +4,14 @@ import { db } from "@/lib/db";
 import { buildRoomWhere, roomFilterSchema } from "@/lib/rooms";
 import { CEFR_LEVELS, LANGUAGES, languageFlag, languageName } from "@/lib/languages";
 import { Badge, buttonClass, Card, inputClass } from "@/components/ui";
+import {
+  IconArrowRight,
+  IconHand,
+  IconLock,
+  IconMic,
+  IconPlus,
+  IconSearch,
+} from "@/components/icons";
 
 export const metadata = { title: "Rooms — LanguageRooms" };
 
@@ -32,24 +40,35 @@ export default async function RoomsPage({
     },
   });
 
-  const selectClass = `${inputClass} w-auto`;
-
   return (
     <div className="space-y-6">
-      <div className="rise-in flex flex-wrap items-center justify-between gap-3">
+      <div className="rise-in flex flex-wrap items-end justify-between gap-3">
         <div>
+          <p className="eyebrow mb-1">Directory</p>
           <h1 className="text-3xl font-bold tracking-tight text-white">Rooms</h1>
-          <p className="mt-1 text-sm text-zinc-500">
-            Jump into a live conversation — or start your own.
+          <p className="mt-1.5 text-sm text-zinc-500">
+            Jump into a live conversation — or start your own table.
           </p>
         </div>
         <Link href="/rooms/new" className={buttonClass}>
-          + Create a room
+          <IconPlus size={16} /> Create a room
         </Link>
       </div>
 
-      <form method="get" className="glass flex flex-wrap gap-2 rounded-2xl p-3">
-        <select name="language" defaultValue={filter.language ?? ""} className={selectClass}>
+      <form method="get" className="glass flex flex-wrap items-center gap-2 rounded-2xl p-3">
+        <div className="relative min-w-52 flex-1">
+          <IconSearch
+            size={15}
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500"
+          />
+          <input
+            name="q"
+            defaultValue={filter.q ?? ""}
+            placeholder="Search rooms and topics…"
+            className={`${inputClass} !pl-9`}
+          />
+        </div>
+        <select name="language" defaultValue={filter.language ?? ""} className={`${inputClass} !w-44`}>
           <option value="">All languages</option>
           {LANGUAGES.map((l) => (
             <option key={l.code} value={l.code}>
@@ -57,7 +76,7 @@ export default async function RoomsPage({
             </option>
           ))}
         </select>
-        <select name="level" defaultValue={filter.level ?? ""} className={selectClass}>
+        <select name="level" defaultValue={filter.level ?? ""} className={`${inputClass} !w-32`}>
           <option value="">All levels</option>
           {CEFR_LEVELS.map((lvl) => (
             <option key={lvl} value={lvl}>
@@ -65,27 +84,21 @@ export default async function RoomsPage({
             </option>
           ))}
         </select>
-        <input
-          name="q"
-          defaultValue={filter.q ?? ""}
-          placeholder="Search rooms…"
-          className={`${inputClass} w-52`}
-        />
-        <button type="submit" className={buttonClass}>
+        <button type="submit" className="btn btn-secondary">
           Filter
         </button>
       </form>
 
       {rooms.length === 0 ? (
-        <Card className="text-center">
+        <Card className="py-14 text-center">
           <p className="text-4xl">🪐</p>
-          <p className="mt-3 text-sm text-zinc-400">
-            No rooms match those filters. Be the first —{" "}
-            <Link href="/rooms/new" className="text-indigo-400 underline">
-              create one
-            </Link>
-            .
+          <h2 className="mt-4 font-semibold text-white">Nothing here yet</h2>
+          <p className="mx-auto mt-1.5 max-w-xs text-sm text-zinc-500">
+            No rooms match those filters. Start the conversation — someone will join.
           </p>
+          <Link href="/rooms/new" className={`${buttonClass} mt-6`}>
+            <IconPlus size={16} /> Create the first room
+          </Link>
         </Card>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -95,33 +108,47 @@ export default async function RoomsPage({
             return (
               <div
                 key={room.id}
-                className={`glass rise-in rise-in-${(i % 3) + 1} group flex flex-col justify-between rounded-2xl p-5 transition-all hover:-translate-y-1 hover:border-indigo-400/30`}
+                className={`glass glass-hover rise-in rise-in-${(i % 3) + 1} flex flex-col justify-between rounded-2xl p-5`}
               >
                 <div>
                   <div className="flex items-start justify-between gap-3">
-                    <span className="text-3xl">{languageFlag(room.languageCode)}</span>
+                    <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                      {languageFlag(room.languageCode)}
+                    </span>
                     <div className="flex flex-wrap justify-end gap-1.5">
                       <Badge tone="indigo">
                         {languageName(room.languageCode)}
                         {room.level ? ` · ${room.level}` : ""}
                       </Badge>
                       {!room.level ? <Badge>all levels</Badge> : null}
-                      {room.isVoiceOnly ? <Badge>🎙 voice</Badge> : null}
-                      {room.isModerated ? <Badge tone="amber">✋ moderated</Badge> : null}
-                      {room.isLocked ? <Badge tone="amber">🔒 locked</Badge> : null}
+                      {room.isVoiceOnly ? (
+                        <Badge>
+                          <IconMic size={11} /> voice
+                        </Badge>
+                      ) : null}
+                      {room.isModerated ? (
+                        <Badge tone="amber">
+                          <IconHand size={11} /> moderated
+                        </Badge>
+                      ) : null}
+                      {room.isLocked ? (
+                        <Badge tone="amber">
+                          <IconLock size={11} /> locked
+                        </Badge>
+                      ) : null}
                     </div>
                   </div>
-                  <h2 className="mt-3 font-semibold text-white">{room.name}</h2>
+                  <h2 className="mt-4 font-semibold leading-snug text-white">{room.name}</h2>
                   {room.topic ? (
                     <p className="mt-1 line-clamp-2 text-sm text-zinc-400">{room.topic}</p>
                   ) : null}
-                  <p className="mt-2 text-xs text-zinc-500">
+                  <p className="mt-2.5 text-xs text-zinc-500">
                     hosted by {room.createdBy.displayName}
                   </p>
                 </div>
                 <div className="mt-5 flex items-center justify-between">
                   <span
-                    className={`flex items-center gap-1.5 text-sm ${
+                    className={`flex items-center gap-1.5 text-[13px] font-medium ${
                       full ? "text-amber-400" : "text-emerald-400"
                     }`}
                   >
@@ -130,8 +157,12 @@ export default async function RoomsPage({
                     ) : null}
                     {count}/{room.capacity} inside
                   </span>
-                  <Link href={`/rooms/${room.id}`} className={buttonClass} aria-disabled={full}>
-                    Join →
+                  <Link
+                    href={`/rooms/${room.id}`}
+                    className={`${buttonClass} !px-4 !py-1.5 !text-[13px]`}
+                    aria-disabled={full}
+                  >
+                    Join <IconArrowRight size={14} />
                   </Link>
                 </div>
               </div>

@@ -70,10 +70,10 @@ export default function HostControls({
   }
 
   const btn =
-    "rounded px-1.5 py-0.5 text-[11px] font-medium border border-zinc-700 text-zinc-300 hover:bg-zinc-800";
+    "rounded-full px-2 py-0.5 text-[11px] font-medium border border-white/12 bg-white/[0.04] text-zinc-300 transition-colors hover:bg-white/[0.09] hover:text-white";
 
   return (
-    <aside className="glass flex w-64 shrink-0 flex-col gap-3 rounded-2xl !border-amber-500/20 p-3">
+    <aside className="panel flex w-64 shrink-0 flex-col gap-3 rounded-2xl !border-amber-500/20 p-3">
       <div>
         <h2 className="text-sm font-semibold text-amber-300">
           {role === "HOST" ? "Host controls" : "Moderator controls"}
@@ -82,7 +82,7 @@ export default function HostControls({
       </div>
 
       {role === "HOST" ? (
-        <div className="space-y-2 rounded-lg bg-zinc-950 p-2">
+        <div className="space-y-2 rounded-xl border border-white/[0.05] bg-white/[0.03] p-2.5">
           <label className="flex items-center justify-between text-xs text-zinc-300">
             <span>Room locked</span>
             <input
@@ -103,7 +103,7 @@ export default function HostControls({
               value={capacity}
               onChange={(e) => setCapacity(Number(e.target.value))}
               onBlur={() => act({ action: "setCapacity", capacity })}
-              className="w-16 rounded border border-zinc-700 bg-zinc-900 px-1 py-0.5 text-right"
+              className="input !w-16 !rounded-lg !px-2 !py-0.5 !text-right !text-xs"
             />
           </label>
         </div>
@@ -117,7 +117,7 @@ export default function HostControls({
           {hands.map((h) => (
             <div
               key={h.userId}
-              className="flex items-center justify-between rounded-lg bg-zinc-950 px-2 py-1"
+              className="flex items-center justify-between rounded-xl border border-amber-500/15 bg-amber-500/[0.06] px-2.5 py-1.5"
             >
               <span className="text-xs text-zinc-200">✋ {h.name}</span>
               <button className={btn} onClick={() => grantSpeak(h.userId)}>
@@ -133,7 +133,7 @@ export default function HostControls({
           Participants ({remoteParticipants.length + 1})
         </h3>
         {remoteParticipants.map((p) => (
-          <div key={p.identity} className="rounded-lg bg-zinc-950 px-2 py-1.5">
+          <div key={p.identity} className="rounded-xl border border-white/[0.05] bg-white/[0.03] px-2.5 py-2">
             <p className="truncate text-xs font-medium text-zinc-200">
               {p.name || p.identity}
             </p>
@@ -145,7 +145,7 @@ export default function HostControls({
                 Mute
               </button>
               <button
-                className={`${btn} !border-red-900 !text-red-300 hover:!bg-red-950`}
+                className={`${btn} !border-rose-500/25 !text-rose-300 hover:!bg-rose-500/10`}
                 onClick={() => act({ action: "kick", targetUserId: p.identity })}
               >
                 Kick
