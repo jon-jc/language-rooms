@@ -19,6 +19,8 @@ export const RATE_LIMITS = {
   // Rejoining the *same* room repeatedly (kick-evasion / scanning).
   roomRejoin: { limit: 5, windowSeconds: 10 * 60 },
   report: { limit: 10, windowSeconds: 60 * 60 },
+  whiteboardDraw: { limit: 240, windowSeconds: 10 * 60 },
+  whiteboardImage: { limit: 12, windowSeconds: 10 * 60 },
 } satisfies Record<string, RateLimitRule>;
 
 export type RateLimitName = keyof typeof RATE_LIMITS;

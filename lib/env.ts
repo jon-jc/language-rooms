@@ -16,6 +16,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_LIVEKIT_URL: z.string().min(1),
   CONTENT_MODERATION_PROVIDER: z.enum(["stub"]).default("stub"),
   EVIDENCE_STORAGE_DIR: z.string().default("./evidence"),
+  UPLOAD_STORAGE_DIR: z.string().default("./uploads"),
   APP_BASE_URL: z.string().url().default("http://localhost:3000"),
   LOG_LEVEL: z
     .enum(["trace", "debug", "info", "warn", "error", "fatal"])

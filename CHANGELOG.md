@@ -2,6 +2,32 @@
 
 All notable changes to LanguageRooms, with date, summary, and rationale.
 
+## [Feature] 2026-07-13 — Modern UI, shared whiteboards, age messaging moved to ToS
+
+**Summary**
+- Visual overhaul: ambient gradient backdrop, frosted-glass surfaces,
+  gradient accent system, animated landing page, redesigned room cards with
+  language flags and live-presence indicators, sticky translucent nav.
+- **Shared whiteboards** per room: freehand drawing + photo uploads
+  (textbook pages, menus) on a synced canvas — persisted server-side,
+  live-synced over LiveKit data channels, capped and rate-limited.
+  Uploads are scanned by the content-moderation provider *before* they
+  appear; flagged images are refused and feed an automated report into the
+  moderation queue. Host/moderator can clear the board (audit-logged).
+- Age-requirement copy removed from marketing/UI surfaces (nav, landing,
+  signup, login, footer, metadata) and consolidated in the Terms of
+  Service. **Enforcement is unchanged**: DOB verification at signup, the
+  18-floor in `lib/age-gate.ts`, neutral rejection + lockout, and ToS §1
+  all remain exactly as before.
+- New: `WhiteboardItem` model + migration, upload store seam
+  (`UPLOAD_STORAGE_DIR`), whiteboard rate limits, 10 new tests (67 total).
+
+**Rationale**
+- Whiteboard uploads reuse the existing moderation pipeline rather than
+  introducing a second, weaker path for user-generated images.
+- The age gate was always enforced by data, not by banners; the copy change
+  is cosmetic while the ToS remains the binding statement.
+
 ## [M6] 2026-07-14 — Abuse handling
 
 **Summary**

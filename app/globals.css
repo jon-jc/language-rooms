@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #08080d;
+  --foreground: #f0f0f5;
 }
 
 @theme inline {
@@ -12,15 +12,84 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Ambient gradient glows behind the whole app */
+.app-backdrop {
+  background:
+    radial-gradient(60rem 40rem at 85% -10%, rgba(99, 102, 241, 0.14), transparent 60%),
+    radial-gradient(50rem 35rem at -10% 30%, rgba(168, 85, 247, 0.10), transparent 60%),
+    radial-gradient(40rem 30rem at 50% 110%, rgba(56, 189, 248, 0.08), transparent 60%),
+    #08080d;
+}
+
+/* Frosted-glass surface */
+.glass {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+.gradient-text {
+  background: linear-gradient(100deg, #818cf8 0%, #c084fc 50%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise-in {
+  animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.rise-in-1 { animation-delay: 0.06s; }
+.rise-in-2 { animation-delay: 0.12s; }
+.rise-in-3 { animation-delay: 0.18s; }
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.live-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+/* Slim, unobtrusive scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Whiteboard drawing surface */
+.wb-surface {
+  touch-action: none;
+  cursor: crosshair;
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
