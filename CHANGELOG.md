@@ -2,6 +2,27 @@
 
 All notable changes to LanguageRooms, with date, summary, and rationale.
 
+## [Feature] 2026-07-14 — Landing page: hero, live product mock, room marquee
+
+**Summary**
+- Rebuilt the landing page as a full marketing arc: aurora-animated hero
+  with a greeting that rotates through ten languages; an **animated mock of
+  the actual room UI** (cycling active speaker with voice bars, mute badge,
+  connection indicators, corrections arriving live in the support panel);
+  a stats band; two counter-scrolling marquee rows of example rooms across
+  14 languages; feature grid; an example five-minute session showing the
+  correct-without-interrupting flow; three-step onboarding; final CTA.
+- All animation is pure CSS/React (no media assets), pauses on hover where
+  scrolling, and fully respects `prefers-reduced-motion`.
+
+**Rationale**
+- The product's pitch *is* the room — showing a faithful animated mock of
+  the grid + support panel sells it better than screenshots, and the
+  example dialogue demonstrates the core promise (corrections without
+  breaking conversation) in ten seconds of reading.
+- Example rooms/dialogue are clearly labeled as examples — no fabricated
+  user counts or testimonials.
+
 ## [M7] 2026-07-14 — Production hardening
 
 **Summary**
