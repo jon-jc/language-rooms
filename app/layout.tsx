@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LanguageRooms — live video language practice (18+)",
+  title: "LanguageRooms — live video language practice",
   description:
-    "Persistent multi-user video and voice rooms for practicing languages together. Adults only.",
+    "Persistent multi-user video and voice rooms for practicing languages together, with shared whiteboards and a supportive community.",
 };
 
 export default async function RootLayout({
@@ -39,15 +39,15 @@ export default async function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-zinc-950 text-zinc-100">
+      <body className="app-backdrop flex min-h-full flex-col text-zinc-100">
         <TopNav user={user} />
-        <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
+        <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8">
           {children}
         </main>
-        <footer className="border-t border-zinc-800 py-4 text-center text-xs text-zinc-600">
-          LanguageRooms is for adults 18 and older. ·{" "}
-          <a href="/terms" className="underline">
-            Terms
+        <footer className="border-t border-white/5 py-5 text-center text-xs text-zinc-600">
+          © LanguageRooms ·{" "}
+          <a href="/terms" className="transition-colors hover:text-zinc-400">
+            Terms of Service
           </a>
         </footer>
       </body>

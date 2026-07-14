@@ -1,43 +1,47 @@
 /** Languages offered in the directory (ISO 639-1 code → English name). */
-export const LANGUAGES: ReadonlyArray<{ code: string; name: string }> = [
-  { code: "ar", name: "Arabic" },
-  { code: "bn", name: "Bengali" },
-  { code: "cs", name: "Czech" },
-  { code: "da", name: "Danish" },
-  { code: "de", name: "German" },
-  { code: "el", name: "Greek" },
-  { code: "en", name: "English" },
-  { code: "es", name: "Spanish" },
-  { code: "fa", name: "Persian" },
-  { code: "fi", name: "Finnish" },
-  { code: "fr", name: "French" },
-  { code: "he", name: "Hebrew" },
-  { code: "hi", name: "Hindi" },
-  { code: "hu", name: "Hungarian" },
-  { code: "id", name: "Indonesian" },
-  { code: "it", name: "Italian" },
-  { code: "ja", name: "Japanese" },
-  { code: "ko", name: "Korean" },
-  { code: "nl", name: "Dutch" },
-  { code: "no", name: "Norwegian" },
-  { code: "pl", name: "Polish" },
-  { code: "pt", name: "Portuguese" },
-  { code: "ro", name: "Romanian" },
-  { code: "ru", name: "Russian" },
-  { code: "sv", name: "Swedish" },
-  { code: "sw", name: "Swahili" },
-  { code: "th", name: "Thai" },
-  { code: "tl", name: "Filipino (Tagalog)" },
-  { code: "tr", name: "Turkish" },
-  { code: "uk", name: "Ukrainian" },
-  { code: "vi", name: "Vietnamese" },
-  { code: "zh", name: "Chinese (Mandarin)" },
+export const LANGUAGES: ReadonlyArray<{ code: string; name: string; flag: string }> = [
+  { code: "ar", name: "Arabic", flag: "🇸🇦" },
+  { code: "bn", name: "Bengali", flag: "🇧🇩" },
+  { code: "cs", name: "Czech", flag: "🇨🇿" },
+  { code: "da", name: "Danish", flag: "🇩🇰" },
+  { code: "de", name: "German", flag: "🇩🇪" },
+  { code: "el", name: "Greek", flag: "🇬🇷" },
+  { code: "en", name: "English", flag: "🇬🇧" },
+  { code: "es", name: "Spanish", flag: "🇪🇸" },
+  { code: "fa", name: "Persian", flag: "🇮🇷" },
+  { code: "fi", name: "Finnish", flag: "🇫🇮" },
+  { code: "fr", name: "French", flag: "🇫🇷" },
+  { code: "he", name: "Hebrew", flag: "🇮🇱" },
+  { code: "hi", name: "Hindi", flag: "🇮🇳" },
+  { code: "hu", name: "Hungarian", flag: "🇭🇺" },
+  { code: "id", name: "Indonesian", flag: "🇮🇩" },
+  { code: "it", name: "Italian", flag: "🇮🇹" },
+  { code: "ja", name: "Japanese", flag: "🇯🇵" },
+  { code: "ko", name: "Korean", flag: "🇰🇷" },
+  { code: "nl", name: "Dutch", flag: "🇳🇱" },
+  { code: "no", name: "Norwegian", flag: "🇳🇴" },
+  { code: "pl", name: "Polish", flag: "🇵🇱" },
+  { code: "pt", name: "Portuguese", flag: "🇵🇹" },
+  { code: "ro", name: "Romanian", flag: "🇷🇴" },
+  { code: "ru", name: "Russian", flag: "🇷🇺" },
+  { code: "sv", name: "Swedish", flag: "🇸🇪" },
+  { code: "sw", name: "Swahili", flag: "🇰🇪" },
+  { code: "th", name: "Thai", flag: "🇹🇭" },
+  { code: "tl", name: "Filipino (Tagalog)", flag: "🇵🇭" },
+  { code: "tr", name: "Turkish", flag: "🇹🇷" },
+  { code: "uk", name: "Ukrainian", flag: "🇺🇦" },
+  { code: "vi", name: "Vietnamese", flag: "🇻🇳" },
+  { code: "zh", name: "Chinese (Mandarin)", flag: "🇨🇳" },
 ];
 
 export const LANGUAGE_CODES = LANGUAGES.map((l) => l.code);
 
 export function languageName(code: string): string {
   return LANGUAGES.find((l) => l.code === code)?.name ?? code;
+}
+
+export function languageFlag(code: string): string {
+  return LANGUAGES.find((l) => l.code === code)?.flag ?? "🌐";
 }
 
 export const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;

@@ -112,8 +112,8 @@ export default function SupportPanel({
   }
 
   return (
-    <aside className="flex w-72 shrink-0 flex-col rounded-xl border border-zinc-800 bg-zinc-900">
-      <div className="border-b border-zinc-800 px-3 py-2">
+    <aside className="glass flex w-72 shrink-0 flex-col rounded-2xl">
+      <div className="border-b border-white/8 px-3 py-2">
         <h2 className="text-sm font-semibold text-zinc-200">Support panel</h2>
         <p className="text-xs text-zinc-500">Corrections · vocabulary · links</p>
       </div>
@@ -136,7 +136,7 @@ export default function SupportPanel({
         )}
       </div>
 
-      <div className="space-y-2 border-t border-zinc-800 p-3">
+      <div className="space-y-2 border-t border-white/8 p-3">
         {isModerated && role === "PARTICIPANT" && !canPublishMedia ? (
           <button
             onClick={toggleHand}

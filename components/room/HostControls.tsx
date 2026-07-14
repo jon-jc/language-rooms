@@ -73,7 +73,7 @@ export default function HostControls({
     "rounded px-1.5 py-0.5 text-[11px] font-medium border border-zinc-700 text-zinc-300 hover:bg-zinc-800";
 
   return (
-    <aside className="flex w-64 shrink-0 flex-col gap-3 rounded-xl border border-amber-900/60 bg-zinc-900 p-3">
+    <aside className="glass flex w-64 shrink-0 flex-col gap-3 rounded-2xl !border-amber-500/20 p-3">
       <div>
         <h2 className="text-sm font-semibold text-amber-300">
           {role === "HOST" ? "Host controls" : "Moderator controls"}
