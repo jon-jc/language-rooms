@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDataChannel } from "@livekit/components-react";
 import { decodeSignal, encodeSignal, WhiteboardSignal } from "@/components/room/signals";
+import { IconImage, IconTrash } from "@/components/icons";
 import {
   BOARD_HEIGHT,
   BOARD_WIDTH,
@@ -180,9 +181,9 @@ export default function Whiteboard({
         </div>
         <button
           onClick={() => fileRef.current?.click()}
-          className="glass rounded-xl px-3.5 py-1.5 text-sm font-medium text-zinc-200 transition-colors hover:bg-white/10"
+          className="glass flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-medium text-zinc-200 transition-colors hover:bg-white/10"
         >
-          📷 Add photo
+          <IconImage size={14} /> Add photo
         </button>
         <input
           ref={fileRef}
@@ -198,9 +199,9 @@ export default function Whiteboard({
         {canClear ? (
           <button
             onClick={clearBoard}
-            className="glass ml-auto rounded-xl px-3.5 py-1.5 text-sm font-medium text-rose-300 transition-colors hover:bg-rose-500/10"
+            className="glass ml-auto flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-medium text-rose-300 transition-colors hover:bg-rose-500/10"
           >
-            Clear board
+            <IconTrash size={14} /> Clear board
           </button>
         ) : null}
       </div>

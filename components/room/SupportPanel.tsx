@@ -11,6 +11,7 @@ import {
   SupportSignal,
 } from "@/components/room/signals";
 import { inputClass } from "@/components/ui";
+import { IconHand, IconMessage } from "@/components/icons";
 
 const KIND_COLORS: Record<NotePayload["kind"], string> = {
   CORRECTION: "text-amber-300",
@@ -112,10 +113,15 @@ export default function SupportPanel({
   }
 
   return (
-    <aside className="glass flex w-72 shrink-0 flex-col rounded-2xl">
-      <div className="border-b border-white/8 px-3 py-2">
-        <h2 className="text-sm font-semibold text-zinc-200">Support panel</h2>
-        <p className="text-xs text-zinc-500">Corrections · vocabulary · links</p>
+    <aside className="panel flex w-72 shrink-0 flex-col rounded-2xl">
+      <div className="hairline-b flex items-center gap-2 px-3.5 py-2.5">
+        <span className="flex h-6 w-6 items-center justify-center rounded-md border border-white/10 bg-white/[0.05] text-[#8b85ff]">
+          <IconMessage size={13} />
+        </span>
+        <div>
+          <h2 className="text-[13px] font-semibold text-zinc-200">Support panel</h2>
+          <p className="text-[10px] text-zinc-500">corrections · vocabulary · links</p>
+        </div>
       </div>
 
       <div ref={listRef} className="flex-1 space-y-2 overflow-y-auto px-3 py-2">
@@ -125,35 +131,39 @@ export default function SupportPanel({
           </p>
         ) : (
           notes.map((n) => (
-            <div key={n.id} className="rounded-lg bg-zinc-950 px-2 py-1.5">
-              <span className={`text-[10px] font-semibold uppercase ${KIND_COLORS[n.kind]}`}>
+            <div
+              key={n.id}
+              className="rounded-xl border border-white/[0.05] bg-white/[0.03] px-2.5 py-2"
+            >
+              <span className={`text-[10px] font-semibold uppercase tracking-wide ${KIND_COLORS[n.kind]}`}>
                 {NOTE_KIND_LABELS[n.kind]}
               </span>
-              <p className="text-sm text-zinc-200">{n.text}</p>
-              <p className="text-[10px] text-zinc-500">{n.author}</p>
+              <p className="text-[13px] leading-snug text-zinc-200">{n.text}</p>
+              <p className="mt-0.5 text-[10px] text-zinc-500">{n.author}</p>
             </div>
           ))
         )}
       </div>
 
-      <div className="space-y-2 border-t border-white/8 p-3">
+      <div className="hairline-t space-y-2 p-3">
         {isModerated && role === "PARTICIPANT" && !canPublishMedia ? (
           <button
             onClick={toggleHand}
-            className={`w-full rounded-lg px-3 py-1.5 text-sm font-semibold ${
+            className={`flex w-full items-center justify-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-semibold transition-all ${
               handUp
-                ? "bg-amber-600 text-white"
-                : "border border-zinc-700 text-zinc-200 hover:bg-zinc-800"
+                ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]"
+                : "border border-white/15 bg-white/[0.04] text-zinc-200 hover:bg-white/[0.08]"
             }`}
           >
-            {handUp ? "✋ Hand raised — waiting…" : "✋ Raise hand to speak"}
+            <IconHand size={14} />
+            {handUp ? "Hand raised — waiting…" : "Raise hand to speak"}
           </button>
         ) : null}
         <div className="flex gap-1">
           <select
             value={kind}
             onChange={(e) => setKind(e.target.value as NotePayload["kind"])}
-            className="rounded-lg border border-zinc-700 bg-zinc-950 px-1 py-1 text-xs"
+            className="input !w-auto !rounded-lg !px-2 !py-1 !text-xs"
           >
             {Object.entries(NOTE_KIND_LABELS).map(([k, label]) => (
               <option key={k} value={k}>
@@ -164,7 +174,7 @@ export default function SupportPanel({
           <select
             value={translateTo}
             onChange={(e) => setTranslateTo(e.target.value)}
-            className="rounded-lg border border-zinc-700 bg-zinc-950 px-1 py-1 text-xs"
+            className="input !w-auto !rounded-lg !px-2 !py-1 !text-xs"
             title="Translation assist"
           >
             <option value="">Translate…</option>
@@ -178,7 +188,7 @@ export default function SupportPanel({
           {translateTo ? (
             <button
               onClick={translate}
-              className="rounded-lg border border-zinc-700 px-2 text-xs text-zinc-300 hover:bg-zinc-800"
+              className="btn btn-secondary !rounded-lg !px-2.5 !py-1 !text-xs"
             >
               Go
             </button>
@@ -196,7 +206,7 @@ export default function SupportPanel({
           <button
             onClick={postNote}
             disabled={busy || !text.trim()}
-            className="rounded-lg bg-indigo-600 px-3 text-sm font-semibold text-white disabled:opacity-50"
+            className="btn btn-primary !rounded-xl !px-3.5 !py-1 !text-[13px]"
           >
             Send
           </button>
