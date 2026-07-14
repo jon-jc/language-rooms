@@ -9,6 +9,7 @@ import {
   LiveKitRoom,
   ParticipantTile,
   RoomAudioRenderer,
+  useTrackRefContext,
   useTracks,
 } from "@livekit/components-react";
 import "@livekit/components-styles";
@@ -16,11 +17,14 @@ import { Track } from "livekit-client";
 import { buttonSecondaryClass, Card, ErrorNote } from "@/components/ui";
 import SupportPanel from "@/components/room/SupportPanel";
 import HostControls from "@/components/room/HostControls";
+import ReportModal, { ReportTarget } from "@/components/room/ReportModal";
+import { BlockEnforcer, captureVideoFrame, FrameSampler } from "@/components/room/safety";
 
 interface JoinInfo {
   token: string;
   url: string;
   role: "HOST" | "MODERATOR" | "PARTICIPANT";
+  hiddenUserIds: string[];
   room: {
     id: string;
     name: string;
@@ -34,8 +38,7 @@ interface JoinInfo {
 /**
  * The live room: joins via POST /api/rooms/:id/join (all admission policy is
  * server-side), then connects to the LiveKit SFU over its WebSocket signaling
- * protocol. LiveKit's client handles ICE/TURN and automatic reconnection;
- * ConnectionStateToast surfaces reconnect state to the user.
+ * protocol. LiveKit's client handles ICE/TURN and automatic reconnection.
  */
 export default function RoomClient({
   roomId,
@@ -47,6 +50,7 @@ export default function RoomClient({
   const router = useRouter();
   const [join, setJoin] = useState<JoinInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [reportTarget, setReportTarget] = useState<ReportTarget | null>(null);
 
   const requestJoin = useCallback(async () => {
     setError(null);
@@ -115,7 +119,11 @@ export default function RoomClient({
         className="flex h-full gap-3"
       >
         <div className="flex min-w-0 flex-1 flex-col">
-          <MediaStage isVoiceOnly={join.room.isVoiceOnly} />
+          <MediaStage
+            isVoiceOnly={join.room.isVoiceOnly}
+            hiddenUserIds={join.hiddenUserIds}
+            onReport={setReportTarget}
+          />
           <RoomAudioRenderer />
           <ControlBar
             variation="minimal"
@@ -144,18 +152,36 @@ export default function RoomClient({
           userId={user.id}
           displayName={user.displayName}
         />
+        <BlockEnforcer hiddenUserIds={join.hiddenUserIds} />
+        {!join.room.isVoiceOnly ? <FrameSampler roomId={roomId} /> : null}
         <ConnectionStateToast />
       </LiveKitRoom>
+      {reportTarget ? (
+        <ReportModal
+          roomId={roomId}
+          target={reportTarget}
+          onClose={() => setReportTarget(null)}
+        />
+      ) : null}
     </div>
   );
 }
 
 /**
- * Multi-participant grid. ParticipantTile provides active-speaker outline
- * (data-lk-speaking), per-tile connection-quality indicator, mute state, and
- * name label out of the box.
+ * Multi-participant grid. ParticipantTile provides active-speaker outline,
+ * per-tile connection-quality indicator, mute state, and name label; the
+ * overlay adds the per-participant Report button. Blocked counterparties'
+ * tiles are filtered out entirely.
  */
-function MediaStage({ isVoiceOnly }: { isVoiceOnly: boolean }) {
+function MediaStage({
+  isVoiceOnly,
+  hiddenUserIds,
+  onReport,
+}: {
+  isVoiceOnly: boolean;
+  hiddenUserIds: string[];
+  onReport: (target: ReportTarget) => void;
+}) {
   const tracks = useTracks(
     isVoiceOnly
       ? [{ source: Track.Source.Microphone, withPlaceholder: true }]
@@ -164,11 +190,45 @@ function MediaStage({ isVoiceOnly }: { isVoiceOnly: boolean }) {
           { source: Track.Source.ScreenShare, withPlaceholder: false },
         ],
     { onlySubscribed: false },
-  );
+  ).filter((t) => !hiddenUserIds.includes(t.participant.identity));
 
   return (
     <GridLayout tracks={tracks} className="flex-1">
-      <ParticipantTile />
+      <StageTile onReport={onReport} />
     </GridLayout>
+  );
+}
+
+function StageTile({ onReport }: { onReport: (target: ReportTarget) => void }) {
+  const trackRef = useTrackRefContext();
+  const participant = trackRef.participant;
+
+  return (
+    <div className="relative h-full w-full">
+      <ParticipantTile trackRef={trackRef} className="h-full" />
+      {!participant.isLocal ? (
+        <button
+          title={`Report ${participant.name || participant.identity}`}
+          aria-label={`Report ${participant.name || participant.identity}`}
+          onClick={() =>
+            onReport({
+              userId: participant.identity,
+              name: participant.name || participant.identity,
+              captureFrames: () => {
+                const pub = participant.getTrackPublication(Track.Source.Camera);
+                const el = pub?.track?.attachedElements?.[0] as
+                  | HTMLVideoElement
+                  | undefined;
+                const frame = captureVideoFrame(el);
+                return frame ? [frame] : [];
+              },
+            })
+          }
+          className="absolute right-1.5 top-1.5 z-10 rounded bg-black/60 px-1.5 py-0.5 text-xs text-red-300 opacity-70 hover:opacity-100"
+        >
+          ⚑ Report
+        </button>
+      ) : null}
+    </div>
   );
 }
