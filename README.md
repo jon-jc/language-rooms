@@ -43,6 +43,14 @@ npm run dev                 # Next.js on http://localhost:3000
 
 Run tests: `npm test` (Vitest).
 
+Grant moderation-queue access (no self-serve path to staff roles exists):
+
+```bash
+npm run user:promote -- you@example.com ADMIN   # or MODERATOR
+```
+
+The queue lives at `/admin`; see [docs/abuse-handling.md](docs/abuse-handling.md).
+
 ## Repository layout
 
 - `app/` — Next.js App Router pages and API routes
@@ -56,7 +64,7 @@ Run tests: `npm test` (Vitest).
   - [docs/modules/rooms.md](docs/modules/rooms.md) — directory, creation, join admission
   - [docs/modules/media.md](docs/modules/media.md) — SFU tokens, webhooks, in-room client
   - [docs/modules/host-controls.md](docs/modules/host-controls.md) — roles, moderation actions, support panel, ratings
-  - [docs/abuse-handling.md](docs/abuse-handling.md) *(lands in M6)*
+  - [docs/abuse-handling.md](docs/abuse-handling.md) — reports & evidence, blocks, strikes, moderation queue, escalation
   - [docs/pr-workflow.md](docs/pr-workflow.md)
 - `docker-compose.yml`, `livekit.yaml` — local infra
 
@@ -71,7 +79,7 @@ before the next begins (see [docs/pr-workflow.md](docs/pr-workflow.md)).
 3. **M3 — Onboarding + room directory**: languages/CEFR, browse/search/create rooms ✅
 4. **M4 — SFU media**: multi-party video/voice, reconnect, quality indicators ✅
 5. **M5 — Host controls**: mute/kick/lock, raise-hand, support panel, ratings ✅
-6. **M6 — Abuse handling**: reports + evidence frames, blocks, strikes, admin queue, moderation hooks, escalation
+6. **M6 — Abuse handling**: reports + evidence frames, blocks, strikes, admin queue, moderation hooks, escalation ✅
 7. **M7 — Production hardening**: full tests, app Dockerfile, deploy docs
 
 Every change is recorded in [CHANGELOG.md](CHANGELOG.md).

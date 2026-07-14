@@ -2,6 +2,43 @@
 
 All notable changes to LanguageRooms, with date, summary, and rationale.
 
+## [M6] 2026-07-14 — Abuse handling
+
+**Summary**
+- In-room reporting with client-captured evidence frames of the target's
+  stream + full metadata; disclosure in the dialog, consent screen, and ToS.
+- Blocks: blocked pairs are never admitted to the same room (either
+  direction); refusal indistinguishable from room-full; mid-session blocks
+  hidden/muted client-side as defense-in-depth.
+- Strikes & reputation: 90-day strikes with an escalating automatic ladder
+  (warn → 24h → 7d → permanent); bans enforced at join and room creation.
+- Automatic enforcement: repeatedly-reported accounts get a 24h restriction
+  pending review (≥3 distinct reporters/24h); repeatedly-reported rooms are
+  taken down automatically with a strike for the host.
+- Moderation queue at `/admin`: SEVERE-first listing, evidence thumbnails
+  (audited access), dismiss/warn/temp-ban/perm-ban/room-takedown with
+  role-scoped powers (perm-ban + takedown admin-only). Staff roles granted
+  only via `npm run user:promote` (audit-logged CLI).
+- Automated scanning: `ContentModerationProvider` interface with a
+  deterministic dev stub; sampled outgoing-video frames posted every 60s
+  (production seam: LiveKit Egress server-side sampling); flagged content
+  becomes automated reports with evidence.
+- CSAM-class escalation: CHILD_SAFETY / SUSPECTED_UNDERAGE always SEVERE,
+  auto-escalated, preservation-locked (cannot be dismissed; no evidence
+  deletion path), single documented `notifyAuthorities` integration point
+  (NCMEC CyberTipline in production; loud log-only stub in dev).
+- Audit logging across the board, including evidence views.
+- Tests: 68 passing (threshold math, strike ladder, ban-state evaluation,
+  anti-brigading boundaries, evidence parsing, stub provider).
+
+**Rationale**
+- Distinct-reporter thresholds keep the report system from being weaponized
+  by a single hostile user.
+- Escalated reports are locked because CSAM evidence handling is a legal
+  obligation (18 U.S.C. § 2258A preservation), not a moderation choice.
+- The scan verdict is never revealed to the sender, so probing uploads
+  teach an attacker nothing.
+
 ## [M5] 2026-07-13 — Host controls, raise-hand, support panel, ratings
 
 **Summary**
