@@ -18,6 +18,7 @@ import { buttonSecondaryClass, Card, ErrorNote } from "@/components/ui";
 import SupportPanel from "@/components/room/SupportPanel";
 import HostControls from "@/components/room/HostControls";
 import ReportModal, { ReportTarget } from "@/components/room/ReportModal";
+import Whiteboard from "@/components/room/Whiteboard";
 import { BlockEnforcer, captureVideoFrame, FrameSampler } from "@/components/room/safety";
 
 interface JoinInfo {
@@ -51,6 +52,7 @@ export default function RoomClient({
   const [join, setJoin] = useState<JoinInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [reportTarget, setReportTarget] = useState<ReportTarget | null>(null);
+  const [view, setView] = useState<"video" | "board">("video");
 
   const requestJoin = useCallback(async () => {
     setError(null);
@@ -118,12 +120,36 @@ export default function RoomClient({
         onDisconnected={onLeave}
         className="flex h-full gap-3"
       >
-        <div className="flex min-w-0 flex-1 flex-col">
-          <MediaStage
-            isVoiceOnly={join.room.isVoiceOnly}
-            hiddenUserIds={join.hiddenUserIds}
-            onReport={setReportTarget}
-          />
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <div className="glass flex w-fit gap-1 rounded-xl p-1">
+            {(["video", "board"] as const).map((v) => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-all ${
+                  view === v
+                    ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white shadow"
+                    : "text-zinc-400 hover:text-white"
+                }`}
+              >
+                {v === "video" ? "🎥 Video" : "🖊️ Whiteboard"}
+              </button>
+            ))}
+          </div>
+          {/* The grid stays mounted while the board is shown so tracks keep
+              rendering and automated frame sampling keeps its video element. */}
+          <div className={view === "video" ? "flex min-h-0 flex-1 flex-col" : "hidden"}>
+            <MediaStage
+              isVoiceOnly={join.room.isVoiceOnly}
+              hiddenUserIds={join.hiddenUserIds}
+              onReport={setReportTarget}
+            />
+          </div>
+          {view === "board" ? (
+            <div className="min-h-0 flex-1">
+              <Whiteboard roomId={roomId} canClear={isStaff} />
+            </div>
+          ) : null}
           <RoomAudioRenderer />
           <ControlBar
             variation="minimal"

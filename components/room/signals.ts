@@ -20,7 +20,14 @@ export type HandSignal = {
   name: string;
 };
 
-export function encodeSignal(signal: SupportSignal | HandSignal): Uint8Array {
+/** Whiteboard sync: add one item (already persisted) or clear the board. */
+export type WhiteboardSignal =
+  | { t: "wb"; op: "add"; item: unknown }
+  | { t: "wb"; op: "clear" };
+
+export function encodeSignal(
+  signal: SupportSignal | HandSignal | WhiteboardSignal,
+): Uint8Array {
   return new TextEncoder().encode(JSON.stringify(signal));
 }
 
