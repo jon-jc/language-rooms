@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+evidence
+uploads
+*.md
+!README.md
+.env
+.env.*
+Dockerfile
+docker-compose.yml
+pnpm-lock.yaml
+pnpm-workspace.yaml
