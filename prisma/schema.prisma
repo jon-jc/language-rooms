@@ -44,6 +44,7 @@ model User {
   blocksReceived  Block[]           @relation("BlocksReceived")
   strikes         Strike[]
   warnings        UserWarning[]
+  whiteboardItems WhiteboardItem[]
 }
 
 // ─── Language profile & onboarding (M3) ─────────────────────────────────────
@@ -95,6 +96,7 @@ model Room {
   participants RoomParticipant[]
   notes        RoomNote[]
   ratings      RoomRating[]
+  whiteboard   WhiteboardItem[]
 
   @@index([languageCode, level])
 }
@@ -328,4 +330,27 @@ model UserWarning {
   acknowledgedAt DateTime?
 
   @@index([userId])
+}
+
+// ─── Collaborative whiteboard (feature/ui-whiteboard) ───────────────────────
+
+enum WhiteboardItemKind {
+  STROKE
+  IMAGE
+}
+
+/// One element on a room's shared whiteboard. Strokes carry their points in
+/// `data`; images carry placement plus a server-side storagePath (uploads are
+/// scanned by the content-moderation provider before they appear).
+model WhiteboardItem {
+  id        String             @id @default(cuid())
+  roomId    String
+  room      Room               @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User               @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  kind      WhiteboardItemKind
+  data      Json
+  createdAt DateTime           @default(now())
+
+  @@index([roomId, createdAt])
 }
