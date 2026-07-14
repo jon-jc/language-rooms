@@ -24,6 +24,40 @@ services:
       timeout: 3s
       retries: 10
 
+  # Containerized app — full-stack runs: docker compose --profile full up
+  # (default dev flow keeps the app on the host via `npm run dev`).
+  app:
+    profiles: ["full"]
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_LIVEKIT_URL: ws://localhost:7890
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://languagerooms:languagerooms_dev@postgres:5432/languagerooms
+      SESSION_SECRET: compose_dev_only_change_me_in_production_0123456789abcdef
+      LIVEKIT_API_KEY: devkey
+      LIVEKIT_API_SECRET: devsecret_languagerooms_local_only_0123456789abcdef
+      LIVEKIT_HOST: http://livekit:7890
+      NEXT_PUBLIC_LIVEKIT_URL: ws://localhost:7890
+      CONTENT_MODERATION_PROVIDER: stub
+      APP_BASE_URL: http://localhost:3000
+      LOG_LEVEL: info
+    volumes:
+      - evidence:/data/evidence
+      - uploads:/data/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      livekit:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
   livekit:
     image: livekit/livekit-server:v1.9
     command: --config /etc/livekit.yaml --node-ip 127.0.0.1
@@ -37,3 +71,5 @@ services:
 
 volumes:
   pgdata:
+  evidence:
+  uploads:

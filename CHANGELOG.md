@@ -2,6 +2,31 @@
 
 All notable changes to LanguageRooms, with date, summary, and rationale.
 
+## [M7] 2026-07-14 — Production hardening
+
+**Summary**
+- App Dockerfile: multi-stage (deps → build → runner), Next.js `standalone`
+  output, non-root user, `prisma migrate deploy` on boot, evidence/upload
+  volumes; `NEXT_PUBLIC_LIVEKIT_URL` as a documented build arg.
+- `docker compose --profile full up --build` runs the entire stack
+  (Postgres + LiveKit + app) with a container healthcheck against the new
+  `/api/health` DB-probing endpoint.
+- Boot-time environment validation via `instrumentation.ts` — bad config
+  fails startup with per-field errors instead of failing on first request.
+- Security headers on every route: nosniff, DENY framing, strict referrer,
+  Permissions-Policy limiting camera/mic to same-origin.
+- `docs/deployment.md`: image build, runtime env table, and a 10-point
+  production checklist (TLS/TURN-TLS, real moderation provider + NCMEC
+  wiring, object-storage evidence locks, Egress sampling, Redis limiter for
+  multi-node, log shipping).
+
+**Rationale**
+- Migrations at container start make the image self-sufficient for
+  single-node deploys while staying compatible with externally-orchestrated
+  migration jobs (the command is idempotent).
+- The health endpoint reveals only up/down — no version or dependency
+  details for reconnaissance.
+
 ## [Feature] 2026-07-13 — Modern UI, shared whiteboards, age messaging moved to ToS
 
 **Summary**

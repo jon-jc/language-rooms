@@ -42,6 +42,14 @@ npx prisma migrate dev      # apply database migrations
 npm run dev                 # Next.js on http://localhost:3000
 ```
 
+Or run the whole stack in containers (app image + migrations included):
+
+```bash
+docker compose --profile full up --build
+```
+
+Production notes and checklist: [docs/deployment.md](docs/deployment.md).
+
 Run tests: `npm test` (Vitest).
 
 Grant moderation-queue access (no self-serve path to staff roles exists):
@@ -68,7 +76,8 @@ The queue lives at `/admin`; see [docs/abuse-handling.md](docs/abuse-handling.md
   - [docs/modules/whiteboard.md](docs/modules/whiteboard.md) — shared whiteboard, moderated photo uploads
   - [docs/abuse-handling.md](docs/abuse-handling.md) — reports & evidence, blocks, strikes, moderation queue, escalation
   - [docs/pr-workflow.md](docs/pr-workflow.md)
-- `docker-compose.yml`, `livekit.yaml` — local infra
+  - [docs/deployment.md](docs/deployment.md) — images, env, production checklist
+- `docker-compose.yml`, `livekit.yaml`, `Dockerfile` — infra
 
 ## Milestones & process
 
@@ -82,6 +91,6 @@ before the next begins (see [docs/pr-workflow.md](docs/pr-workflow.md)).
 4. **M4 — SFU media**: multi-party video/voice, reconnect, quality indicators ✅
 5. **M5 — Host controls**: mute/kick/lock, raise-hand, support panel, ratings ✅
 6. **M6 — Abuse handling**: reports + evidence frames, blocks, strikes, admin queue, moderation hooks, escalation ✅
-7. **M7 — Production hardening**: full tests, app Dockerfile, deploy docs
+7. **M7 — Production hardening**: full tests, app Dockerfile, deploy docs ✅
 
 Every change is recorded in [CHANGELOG.md](CHANGELOG.md).
